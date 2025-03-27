@@ -12,7 +12,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = [
-            'posts' =>  Post::with('user')->latest()->get()
+            'posts' =>  Post::where("user_id", Auth::id())->with('user')->latest()->get()
         ];
 
         return Inertia::render("Posts/Index", $posts);
