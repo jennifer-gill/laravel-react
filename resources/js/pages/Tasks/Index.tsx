@@ -21,6 +21,16 @@ import {
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreVertical, Pencil, Trash } from "lucide-react";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -93,10 +103,10 @@ export const columns: ColumnDef<Task>[] = [
     ),
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
   },
-  // {
-  //   accessorKey: "description",
-  //   header: "Description",
-  // },
+  {
+    accessorKey: "description",
+    header: "Description",
+  },
   {
     id: "actions",
     header: () => <div className="text-right pr-4">Action</div>, // Adds padding to the right
@@ -149,8 +159,6 @@ export const columns: ColumnDef<Task>[] = [
 
 // Dashboard Component
 export default function Dashboard({ tasks }: { tasks: Task[] }) {
-
-
 
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -253,7 +261,56 @@ export default function Dashboard({ tasks }: { tasks: Task[] }) {
                 )}
               </TableBody>
             </Table>
+
+
           </div>
+
+          <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center gap-2">
+
+
+              <span>Rows per page:</span>
+              <Select
+                onValueChange={(value) => table.setPageSize(Number(value))}
+                value={String(table.getState().pagination.pageSize)}
+              >
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="Per Page" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Per Page</SelectLabel>
+                    {[5, 10, 20, 50, 100].map((pageSize) => (
+                      <SelectItem key={pageSize} value={String(pageSize)}>
+                        {pageSize}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Previous
+              </Button>
+              <span>
+                Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+              </span>
+              <Button
+                variant="outline"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+
         </div>
       </div>
     </AppLayout>
